@@ -1,5 +1,5 @@
-# Name:  - your name (and your partners name) <br>
-# Peers:  - names of CSC252 students who you consulted or ``N/A'' <br>
+# Name:  - Isabelle Wang <br>
+# Peers:  - Danielle Justo <br>
 # References:  https://www.geeksforgeeks.org/dsa/coin-change-dp-7/<br>
 from random import randint
 
@@ -83,7 +83,7 @@ def calcPermutations(val:int) -> None:
         for i in range(1, val + 1):
             if i - bill >= 0:
                 for lst in m[i - bill]:
-                    m[i].append(lst + [bill])
+                    m[i] = append(m[i], (lst + [bill]))
 
     for combos in m[val]: 
         for j in combos: 
