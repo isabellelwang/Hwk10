@@ -123,22 +123,9 @@ def getNumberOfWays(change_amount:int, bill_list:list) -> int:
     :param bill_list: (list) list of values to calculate the number of combinations of change_amount
     :return: (int) The number of combinations for change_amount using only values in bill_list
 
-    >>> calcPermutations(12)
-    111111111111 
-    11111111112 
-    1111111122 
-    111111222 
-    11112222 
-    1122222 
-    222222 
-    11111115 
-    1111125 
-    111225 
-    12225 
-    1155 
-    255 
-    1110 
-    210 
+    >>> bills = [1, 2, 5, 10, 20, 50, 100]
+    >>> print(getNumberOfWays(12, bill))
+    15
     '''
     m = [0] * (change_amount + 1) # array 
     m[0] = 1
@@ -161,9 +148,9 @@ def main():
 
     bills = [1, 2, 5, 10, 20, 50, 100]
     change = randint(1, 100)
-    print("For $" + str(change) + " there are " + str(getNumberOfWays(4, bills)) + " combinations.")
+    print("For $" + str(change) + " there are " + str(getNumberOfWays(change, bills)) + " combinations.")
 
-    calcPermutations(12)
+    calcPermutations(change)
 
 if __name__ == '__main__': 
     main()
