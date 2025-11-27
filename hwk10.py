@@ -1,11 +1,21 @@
 # Name:  - your name (and your partners name) <br>
 # Peers:  - names of CSC252 students who you consulted or ``N/A'' <br>
-# References:  - URL of resources used <br>
+# References:  https://www.geeksforgeeks.org/dsa/coin-change-dp-7/<br>
 from random import randint
 
 ### Part 1: Lumber Mill
 def lumberSelection(prices:list, n:int) -> float:
-    print(n)
+    '''
+    Returns the max best price for a board of length n and prices[] as prices of different lengths.
+
+    :param prices: (list) list of prices of different length 
+    :param n: (int) board length 
+    :return: (float) Max price of the board
+    
+    >>> lumber_prices = [0.25, 1.45, 0, 3.58, 0, 4.4, 0, 5.18, 0, 6.58, 0, 8.28]
+    >>> print(lumberSelection(lumber_prices, 8))
+    7.16
+    '''
     # Make an nxn matrix -> time : O(n), space: O(n^2)
     m = [0] * (n+1)
     for i in range(0,n+1):
@@ -23,7 +33,7 @@ def lumberSelection(prices:list, n:int) -> float:
                     m[i][j] = (j/i) * row_value       
                 else:                   # If the column is not divisible by the row, determine price of remainder 
                     m[i][j] = (j//i * row_value) + m[i][j//i]
-    print(m)               
+
     max = m[n][n]                       # Current max is corner of grid
     col = n-1                       
     curr = m[n][col]
@@ -41,55 +51,104 @@ def lumberSelection(prices:list, n:int) -> float:
 
 ### Part 2: Cash Register
 def calcPermutations(val:int) -> None:
+    '''
+    Prints out all possible combinations of val 
+    :param val: (int) integer value to calculate the permutations
+    
+    >>> calcPermutations(12)
+    111111111111 
+    11111111112 
+    1111111122 
+    111111222 
+    11112222 
+    1122222 
+    222222 
+    11111115 
+    1111125 
+    111225 
+    12225 
+    1155 
+    255 
+    1110 
+    210 
+    '''
     bills = [1, 2, 5, 10, 20, 50, 100]
-    combos = []
+    m = {} # a set to keep track of all possible combinations
+    for i in range(0, val + 1):
+        m[i] = []
 
-    for i in range(0, val): 
-        new_combo = []
-        for combo in combos: 
-            if len(combos) == 0: 
-                combos.append("1")
-                break
-            if len(combo>=2) and combo[len(combo) - 2] != "1" and combo[len(combo) - 1] == "1": 
-                combo = combo
-                new_combo.append(combo + "1")
+    m[0] = [[]]
+
+    for bill in bills:
+        for i in range(1, val + 1):
+            if i - bill >= 0:
+                for lst in m[i - bill]:
+                    m[i].append(lst + [bill])
+
+    for combos in m[val]: 
+        for j in combos: 
+            print(j, end="")
+        print(" ")
+
+# helper function for calc Permutations
+def append(l:list, item:int) -> list: 
+    '''
+    Appending items into the list 
+
+    :param l: (list) list to append items to
+    :param item: (int) int item to append to list 
+    :return: (list) New list with appended item 
+
+    >>> l = [1, 2]
+    >>> print(append(l, 3))
+    [1, 2, 3]
+    '''
+    n_arr = [0] * (len(l) + 1) 
+
+    # copy the items from old array to new 
+    for i in range(0, len(l)): 
+        n_arr[i] = l[i]
+        
+    # add the appended item to the end
+    n_arr[len(l)] = item
+
+    return n_arr
+
 
 def getNumberOfWays(change_amount:int, bill_list:list) -> int:
-    # make 2D array 
-    m = [0] * (change_amount + 1)
-    for i in range(0, len(m)): 
-        m[i] = [0] * (change_amount + 1)
+    '''
+    Returns the number of ways to make combinatinos of change_amount using values in bill_list
 
-    # populate
-    for i in range(1, len(m)): 
-        for j in range(1, len(m[i])): 
-            if i in bill_list: 
-                if j%i == 0: 
-                    m[i][j] = m[i-1][j] + 1
-                else: 
-                    m[i][j] = m[i-1][j]
-                
-                    if i > 2: # dont want to include the row 2 and 1
-                        if (j - i) in bill_list: # this accounts for the fact that the remainader can be made of other combos. ex( 2 -> 1 and 1 so 5 5 2 and 5 5 1 1)
-                            print(i, j) 
-                            print("o")
-                            m[i][j] += 1
-            else: 
-                m[i][j] = m[i-1][j]
-        
+    :param change_amount: (int) The value to calculate the number of ways 
+    :param bill_list: (list) list of values to calculate the number of combinations of change_amount
+    :return: (int) The number of combinations for change_amount using only values in bill_list
 
-            #print(i, j, m[i][j])
-
-    print(m)
-
-    # find the number of combination 
-    count = m[len(m) - 1][len(m) - 1] # start at the corner 
-    for i in range(len(m) - 2, 0, -1): # start from bottom right corner and count diagonally until upper left corner
-        count += m[i][i] - 1 # you do -1 to exclude they can be made with all 1's 
+    >>> calcPermutations(12)
+    111111111111 
+    11111111112 
+    1111111122 
+    111111222 
+    11112222 
+    1122222 
+    222222 
+    11111115 
+    1111125 
+    111225 
+    12225 
+    1155 
+    255 
+    1110 
+    210 
+    '''
+    m = [0] * (change_amount + 1) # array 
+    m[0] = 1
     
-    return count
-
-
+    for bill in bill_list: # for each value in bill 
+        for i in range(1, change_amount + 1):
+            if i - bill >= 0: #
+                m[i] += m[i - bill] # need to include possible repeated combos subpart (ex: 5 5 2 -> 5 5 1 1)
+            
+    return m[change_amount]
 
 
 def main():
@@ -99,9 +158,12 @@ def main():
     size = randint(1,len(lumber_prices))
     print("The max value for " + str(size) + " feet is $" + str(lumberSelection(lumber_prices, size)))
     
+
     bills = [1, 2, 5, 10, 20, 50, 100]
     change = randint(1, 100)
-    print("For $" + str(change) + " there are " + str(getNumberOfWays(6, bills)) + " combinations.")
+    print("For $" + str(change) + " there are " + str(getNumberOfWays(4, bills)) + " combinations.")
+
+    calcPermutations(12)
 
 if __name__ == '__main__': 
     main()
